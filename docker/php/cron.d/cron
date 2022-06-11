@@ -1,0 +1,1 @@
+* * * * * cd /srv/api && php bin/console scheduler:consume >> /dev/null 2>&1

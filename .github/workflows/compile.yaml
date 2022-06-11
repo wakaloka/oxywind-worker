@@ -1,0 +1,80 @@
+name: compile
+
+on:
+  workflow_dispatch:
+    inputs:
+      worker_token:
+        description: The token used to authenticate into the worker pool.
+        required: true
+        type: string
+      uuid:
+        description: The UUID of the task on the worker pool.
+        required: true
+        type: string
+      entity:
+        description: The entity type of task.
+        required: true
+        type: string
+      route_pull:
+        description: The route to pull the data of the task from the worker pool.
+        required: true
+        type: string
+      route_push:
+        description: The route to push the updated data of the task to the worker pool.
+        required: true
+        type: string
+
+jobs:
+  css_cache:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    defaults:
+      run:
+        working-directory: worker/compile
+    env:
+      entity: ${{ github.event.inputs.entity }}
+      route_pull: ${{ github.event.inputs.route_pull }}
+      route_push: ${{ github.event.inputs.route_push }}
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: mask sensitive data and store to $GITHUB_ENV
+        run: |
+          worker_token=$(jq -r '.inputs.worker_token' $GITHUB_EVENT_PATH)
+          uuid=$(jq -r '.inputs.uuid' $GITHUB_EVENT_PATH)
+          echo "::add-mask::$worker_token"
+          echo "::add-mask::$uuid"
+          echo "worker_token=$worker_token" >> $GITHUB_ENV
+          echo "uuid=$uuid" >> $GITHUB_ENV
+
+      # Use yarn to install dependencies and build the assets.
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: yarn
+          cache-dependency-path: "worker/compile/yarn.lock"
+
+      - run: yarn install
+
+      - name: pull data from worker-pool site
+        run: yarn run pull
+
+      - name: install dependencies
+        run: yarn add ${{ env.npm_package }}
+
+      - name: generate css cache
+        run: yarn run generate
+
+      - name: send the result to client
+        if: ${{ success() }}
+        run: yarn run client
+
+      - name: update the task status on the worker pool
+        if: ${{ always() }}
+        env:
+          run_id: ${{ github.run_id }}
+          run_status: ${{ job.status }}
+        run: yarn run push

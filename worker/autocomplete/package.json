@@ -1,0 +1,27 @@
+{
+  "name": "autocomplete",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "pull": "node pull.js",
+    "generate": "ts-node generate.ts",
+    "client": "node client.js",
+    "push": "node push.js"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "@actions/core": "^1.8.2",
+    "@types/lodash": "^4.14.182",
+    "@types/node": "^17.0.42",
+    "axios": "^0.27.2",
+    "tailwindcss-classnames": "^3.0.5",
+    "ts-node": "^10.8.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.3"
+  },
+  "volta": {
+    "node": "16.15.1",
+    "yarn": "1.22.19"
+  }
+}
