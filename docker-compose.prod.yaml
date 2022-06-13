@@ -9,6 +9,13 @@ services:
     environment:
       APP_ENV: prod
       APP_SECRET: ${APP_SECRET}
+      SERVER_NAME: ${SERVER_NAME}
+      GITHUB_API_TOKEN: ${GITHUB_API_TOKEN}
+      WORKER_TOKEN: ${WORKER_TOKEN}
+      WORKER_REPO_OWNER: ${WORKER_REPO_OWNER}
+      WORKER_REPO_NAME: ${WORKER_REPO_NAME}
+      WORKER_REPO_REF: ${WORKER_REPO_REF}
+      CF_API_TOKEN: ${CF_API_TOKEN}
 
   database:
     volumes:
