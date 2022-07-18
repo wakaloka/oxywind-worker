@@ -10,7 +10,7 @@ app_home:
     path: /
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
     defaults:
-        path: "https://github.com/wakaloka/oxywind-worker"
+        path: "https://github.com/wakaloka/winden-worker"
         # add this to keep the original query string parameters when redirecting
         keepQueryParams: true
         # add this to keep the HTTP method when redirecting. The redirect status changes
